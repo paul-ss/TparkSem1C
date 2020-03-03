@@ -5,9 +5,10 @@
 
 #include "vector.h"
 
+#define INCREASE_COEFF 2
 
 vector *create_vec(size_t cap) {
-  vector *vec_ptr = (vector *) calloc(1, sizeof(vector));
+  vector *vec_ptr = calloc(1, sizeof(vector));
   if (vec_ptr == NULL) {
     return NULL;
   }
@@ -15,7 +16,7 @@ vector *create_vec(size_t cap) {
   vec_ptr->size = 0;
   vec_ptr->capacity = cap;
 
-  vec_ptr->arr_ptr = (data *) calloc(cap, sizeof(data));
+  vec_ptr->arr_ptr = calloc(cap, sizeof(data));
   if (cap != 0 && vec_ptr->arr_ptr == NULL) {
     free(vec_ptr);
     return NULL;
@@ -35,7 +36,7 @@ int increase_vec(vector *vec_ptr) {
       new_cap = 1;
     }
 
-    data *new_arr_ptr = (data *) realloc(vec_ptr->arr_ptr, sizeof(data) * new_cap);
+    data *new_arr_ptr = realloc(vec_ptr->arr_ptr, sizeof(data) * new_cap);
     if (new_arr_ptr == NULL) {
       return -1;
     }

@@ -2,19 +2,19 @@
 // Created by paul_s on 28.02.2020.
 //
 
-#ifndef HW_1_VECTOR_H
-#define HW_1_VECTOR_H
+#ifndef PROJECT_INCLUDE_VECTOR_H_
+#define PROJECT_INCLUDE_VECTOR_H_
 
 #include "io_data.h"
 
-#define INCREASE_COEFF 2
 
-typedef struct vector {
+struct vector {
   data *arr_ptr;
   size_t size;
   size_t capacity;
-} vector;
+};
 
+typedef struct vector vector;
 
 vector *create_vec(size_t cap);
 int increase_vec(vector *vec_ptr);
@@ -23,4 +23,4 @@ int push_back(vector *vec_ptr, const data *data_ptr);
 int get_elem(vector *vec_ptr, data *data_ptr, size_t index);
 
 
-#endif //HW_1_VECTOR_H
+#endif  // PROJECT_INCLUDE_VECTOR_H_
