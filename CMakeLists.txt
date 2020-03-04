@@ -27,7 +27,7 @@ ADD_EXECUTABLE(
         project/src/vector.c
         project/include/vector.h
         project/src/io_data.c
-        project/include/io_data.h)
+        project/include/io_data.h tests/test_io_data.cpp)
 
 target_link_libraries( tests ${GTEST_LIBRARIES} Threads::Threads)
 

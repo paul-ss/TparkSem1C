@@ -6,24 +6,23 @@
 #include "io_data.h"
 #include "vector.h"
 
-#define INPUT_STRING_FORMAT  "%19s"
 
 
 int read_data(data *result) {
   printf("Enter name: ");
-  if (scanf(INPUT_STRING_FORMAT, result->name) != 1) {
+  if (scanf("%" STRING_LENGTH_STR "s" , result->name) != 1) {
     return -1;
   }
   custom_flush();
 
   printf("Enter surname: ");
-  if (scanf(INPUT_STRING_FORMAT, result->surname) != 1) {
+  if (scanf("%" STRING_LENGTH_STR "s", result->surname) != 1) {
     return -1;
   }
   custom_flush();
 
   printf("Enter role: ");
-  if (scanf(INPUT_STRING_FORMAT, result->role) != 1) {
+  if (scanf("%" STRING_LENGTH_STR "s", result->role) != 1) {
     return -1;
   }
   custom_flush();
@@ -39,9 +38,9 @@ int read_data(data *result) {
 
 void print_data(data *person, size_t number) {
     printf("Person %zu\n", number);
-    printf("Name: %s\n", person->name);
-    printf("Surname: %s\n", person->surname);
-    printf("Role: %s\n", person->role);
+    printf("Name: %." STRING_LENGTH_STR "s\n", person->name);
+    printf("Surname: %." STRING_LENGTH_STR "s\n", person->surname);
+    printf("Role: %." STRING_LENGTH_STR "s\n", person->role);
     printf("Degree: %d\n", person->degree);
     printf("\n");
 }
@@ -86,7 +85,11 @@ void custom_flush() {
 }
 
 // role = "all" - print all roles, ignore_degree = 1 - print all degrees
-vector *conditional_get_data(vector *vec_ptr, char *role, int min_degree, int max_degree, int ignore_degree) {
+vector *conditional_get_data(vector *vec_ptr,
+                              const char *role,
+                              int min_degree,
+                              int max_degree,
+                              int ignore_degree) {
   vector *res_ptr = create_vec(0);
 
   data person;
@@ -96,7 +99,7 @@ vector *conditional_get_data(vector *vec_ptr, char *role, int min_degree, int ma
     }
 
     // all cases, then role is not chosen
-    if (!strncmp("all", role, STRING_SIZE)) {
+    if (!strncmp("all", role, STRING_LENGTH)) {
       if (ignore_degree == 1) {
         push_back(res_ptr, &person);
         // print_data(&person, i);
@@ -109,7 +112,7 @@ vector *conditional_get_data(vector *vec_ptr, char *role, int min_degree, int ma
     }
 
     // all cases, then the role is chosen
-    if (!strncmp(person.role, role, STRING_SIZE)) {
+    if (!strncmp(person.role, role, STRING_LENGTH)) {
       if (ignore_degree == 1) {
         push_back(res_ptr, &person);
         // print_data(&person, i);
@@ -131,10 +134,10 @@ vector *conditional_get_data(vector *vec_ptr, char *role, int min_degree, int ma
 }
 
 void print_interface(vector *vec_ptr) {
-  char role[STRING_SIZE];
+  char role[STRING_LENGTH];
   printf("Enter person role ('all' - to see all) : ");
-  if (scanf(INPUT_STRING_FORMAT, role) != 1) {
-    snprintf(role, STRING_SIZE - 1, "all");
+  if (scanf("%" STRING_LENGTH_STR "s", role) != 1) {
+    snprintf(role, STRING_LENGTH - 1, "all");
   }
   custom_flush();
 
