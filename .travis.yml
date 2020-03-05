@@ -13,7 +13,17 @@ install:
 
      #Install cmake & gcc
     - sudo apt install -y cmake
-    - sudo apt-get install gcc-7 g++-7
+
+     #Install gcc 7
+    - sudo apt-get install -y software-properties-common
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+    - sudo apt update
+    - sudo apt install g++-7 -y
+
+    - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    - sudo update-alternatives --config gcc
+    - gcc --version
+    - g++ --version
 
      #Install gtest
     - sudo apt-get install -y libgtest-dev
