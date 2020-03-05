@@ -8,11 +8,12 @@ os: linux
 compiler: gcc
 
 install:
+    - sudo add-apt-repository ppa:jonathonf/gcc-7.1
     - sudo apt-get update
 
      #Install cmake & gcc
     - sudo apt install -y cmake
-    - sudo apt install -y gcc
+    - sudo apt-get install gcc-7 g++-7
 
      #Install gtest
     - sudo apt-get install -y libgtest-dev
