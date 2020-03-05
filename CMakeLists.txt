@@ -33,4 +33,4 @@ target_link_libraries(tests ${GTEST_LIBRARIES} Threads::Threads)
 
 
 enable_testing()
-add_test(tests "unit tests")
+add_test(tests "./tests")
