@@ -7,6 +7,10 @@ os: linux
 
 compiler: gcc
 
+env:
+    global:
+        - CODECOV_TOKEN="8bd1e3bd-a089-4b38-bb91-52d262509642"
+
 install:
     - sudo apt-get update
 
@@ -45,3 +49,6 @@ script:
     - cmake .. || travis_terminate 1
     - make || travis_terminate 1
     - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests || travis_terminate 1
+
+after_script:
+    - bash <(curl -s https://codecov.io/bash)

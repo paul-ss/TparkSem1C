@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 project(hw_1 C CXX)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_C_FLAGS "-Wall -Wextra -Werror --coverage")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wpedantic")
-#set(CMAKE_CXX_FLAGS)
+set(CMAKE_CXX_FLAGS "--coverage")
 
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
