@@ -8,7 +8,6 @@ os: linux
 compiler: gcc
 
 install:
-    - sudo add-apt-repository ppa:jonathonf/gcc-7.1
     - sudo apt-get update
 
      #Install cmake & gcc
