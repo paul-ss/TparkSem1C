@@ -11,7 +11,6 @@
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
-#include <wait.h>
 
 #include <stdlib.h>
 #include <pthread.h>
