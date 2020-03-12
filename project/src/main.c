@@ -12,7 +12,16 @@
 #include "time.h"
 #include "array.h"
 
+static __inline__ unsigned long long rdtsc(void)
+{
+  unsigned hi, lo;
+  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+}
+
+
 int main(int argc, char* argv[]) {
+
 
   if (argc < 2) {
     printf("Invalid input arguments\n");
@@ -26,24 +35,31 @@ int main(int argc, char* argv[]) {
 
   double elem = 0;
   elem = 1;
+
+  long cycles1 = rdtsc();
   unsigned int start = clock();
   array *arr_ptr1 = matrix_col_sum_naive(mat_ptr);
   unsigned int finish = clock();
+  long cycles2 = rdtsc();
 
-  printf("long method: %d\n", finish - start);
+  printf("long method proc time: %d\ntacts: %ld\n", finish - start, cycles2 - cycles1);
 
 
+  cycles1 = rdtsc();
   start = clock();
   array *arr_ptr2 = matrix_col_sum_optimised(mat_ptr);
   finish = clock();
-  printf("quick method: %d\n", finish - start);
+  cycles2 = rdtsc();
+  printf("quick method proc time: %d\ntacts: %ld\n", finish - start, cycles2 - cycles1);
 
 
+  cycles1 = rdtsc();
   start = clock();
   array *arr_ptr3 = matrix_col_sum_common(mat_ptr);
   finish = clock();
+  cycles2 = rdtsc();
 
-  printf("common method: %d\n", finish - start);
+  printf("common method proc time: %d\ntacts: %ld\n", finish - start, cycles2 - cycles1);
 
   for (size_t i = 0; i < arr_ptr1->size; i++) {
       if (fabs(arr_ptr1->data[i] - arr_ptr2->data[i]) > 0.00001) {
