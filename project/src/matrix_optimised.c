@@ -76,7 +76,7 @@ array *matrix_col_sum_optimised(matrix *mat_ptr) {
   // numder of cores
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
   assert(proc_number > 1);
-  size_t n_child_threads = /*proc_number*/ 4;
+  size_t n_child_threads = proc_number;
 
   // array for storing result
   array *col_sums_ptr = create_array(mat_ptr->cols);
