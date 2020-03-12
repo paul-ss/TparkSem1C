@@ -1,0 +1,61 @@
+dist:     xenial
+sudo:     required
+
+language: c
+
+os: linux
+
+compiler: gcc
+
+#env:
+#  global:
+ #   - CODECOV_TOKEN="8bd1e3bd-a089-4b38-bb91-52d262509642"
+
+install:
+  - sudo apt-get update
+
+  #Install cmake
+  - sudo apt install -y cmake
+
+  #Install gcc 7
+  - sudo apt-get install -y software-properties-common
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt update
+  - sudo apt install g++-7 -y
+
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+  - sudo update-alternatives --config gcc
+  - gcc --version
+  - g++ --version
+
+  #Install gtest
+  - sudo apt-get install -y libgtest-dev
+  - cd /usr/src/gtest
+  - sudo cmake CMakeLists.txt
+  - sudo make
+  - sudo cp *.a /usr/lib
+  - cd -
+
+  #Install valgrind
+  - sudo apt-get install -y valgrind
+
+
+before_script:
+  - ./linters/run.sh || travis_terminate 1
+
+script:
+  - mkdir build
+  - cd build
+  - cmake .. || travis_terminate 1
+  - make || travis_terminate 1
+ # - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests || travis_terminate 1
+  - ./gen 1.txt 500 500 || travis_terminate 1
+  - ./gen 2.txt 5000 5000 || travis_terminate 1
+  - ./gen 3.txt 10000 10000 || travis_terminate 1
+  - ./hw-2 1.txt || travis_terminate 1
+  - ./hw-2 2.txt || travis_terminate 1
+  - ./hw-2 3.txt || travis_terminate 1
+
+
+#after_script:
+#  - bash <(curl -s https://codecov.io/bash)
