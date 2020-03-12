@@ -2,6 +2,8 @@
 // Created by paul_s on 10.03.2020.
 //
 
+#define _GNU_SOURCE
+
 #include "array.h"
 #include "matrix.h"
 #include "matrix_optimised.h"
@@ -104,7 +106,21 @@ array *matrix_col_sum_optimised(matrix *mat_ptr) {
       free_array(col_sums_ptr);
       return NULL;
     }
+
+    // set affinity
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(i, &cpuset);
+
+    if (pthread_setaffinity_np(child_threads[i], sizeof(cpu_set_t), &cpuset) != 0) {
+      join_child_threads(child_threads, n_child_threads);
+      free_array(col_sums_ptr);
+      return NULL;
+    }
+
   }
+
+
 
  /* w_attr = create_worker_attr(col_sums_ptr, mat_ptr,i * row_range, mat_ptr->rows);
   void *return_status = thread_worker(&w_attr);
@@ -150,7 +166,11 @@ int join_child_threads(const pthread_t child_threads [], size_t n_child_threads)
 
 // [row_begin; row_end)
 void *thread_worker(void *void_attr_ptr) {
+  usleep(20000);
+
   worker_attr *attr_ptr = void_attr_ptr;
+  printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
+
   int *return_stat = calloc(1, sizeof(int));
 
   if (attr_ptr == NULL || attr_ptr->sums_arr_ptr == NULL || attr_ptr->mat_ptr == NULL) {
