@@ -169,16 +169,22 @@ void *thread_worker(void *void_attr_ptr) {
     return return_stat;
   }
 
-  for (size_t i = attr_ptr->row_begin; i < attr_ptr->row_end; i++) {
-    for (size_t j = 0; j < attr_ptr->mat_ptr->cols; j++) {
+  register size_t row_begin = attr_ptr->row_begin;
+  register size_t row_end = attr_ptr->row_end;
+  register size_t cols = attr_ptr->mat_ptr->cols;
+  register double *mat_data_ptr = attr_ptr->mat_ptr->data;
+  register double *tmp_arr_ptr_data = tmp_arr_ptr->data;
+  for (size_t i = row_begin; i < row_end; i++) {
+    for (size_t j = 0; j < cols; j++) {
       //get_elem(mat_ptr, &elem, j, i);
-      tmp_arr_ptr->data[j] += attr_ptr->mat_ptr->data[j + i * attr_ptr->mat_ptr->cols];
+      tmp_arr_ptr_data[j] += mat_data_ptr[j + i * cols];
     }
   }
 
+  register double *target_sums_array_ptr = attr_ptr->sums_arr_ptr->data;
   pthread_mutex_lock(&sums_lock);
-  for (size_t j = 0; j < attr_ptr->mat_ptr->cols; j++) {
-    attr_ptr->sums_arr_ptr->data[j] += tmp_arr_ptr->data[j];
+  for (size_t j = 0; j < cols; j++) {
+    target_sums_array_ptr[j] += tmp_arr_ptr->data[j];
   }
   pthread_mutex_unlock(&sums_lock);
 
