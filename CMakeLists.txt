@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_C_FLAGS "-pthread  -fopenmp")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic --coverage")
 set(CMAKE_CXX_FLAGS "--coverage")
 
 find_package(GTest REQUIRED)
