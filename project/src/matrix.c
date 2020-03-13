@@ -11,6 +11,10 @@
 
 
 matrix *create_matrix(size_t rows, size_t cols) {
+  if (rows == 0 || cols == 0) {
+    return NULL;
+  }
+
   matrix *mat_ptr = calloc(1, sizeof(matrix));
   if (mat_ptr == NULL) {
     return NULL;
@@ -29,7 +33,10 @@ matrix *create_matrix(size_t rows, size_t cols) {
 }
 
 void free_matrix(matrix *mat_ptr) {
-  free(mat_ptr->data);
+  if (mat_ptr != NULL) {
+    free(mat_ptr->data);
+  }
+
   free(mat_ptr);
 }
 
@@ -52,6 +59,7 @@ void print_matrix(matrix *mat_ptr) {
 }
 
 
+
 matrix *create_matrix_from_file(const char *file_name) {
   FILE *fp = fopen(file_name, "r");
   if (fp == NULL) {
@@ -66,12 +74,18 @@ matrix *create_matrix_from_file(const char *file_name) {
   }
 
   matrix *mat_ptr = create_matrix(rows, cols);
+  if (mat_ptr == NULL) {
+    fclose(fp);
+    return NULL;
+  }
+
   double elem = 0;
   for (size_t i = 0; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
       if (fscanf(fp, "%lf", &elem) != 1) {
         free_matrix(mat_ptr);
         fclose(fp);
+        return NULL;
       }
       set_elem(mat_ptr, elem, i, j);
     }
@@ -80,6 +94,8 @@ matrix *create_matrix_from_file(const char *file_name) {
   fclose(fp);
   return mat_ptr;
 }
+
+
 
 int set_elem(matrix *mat_ptr, double elem, size_t row, size_t col) {
   if (mat_ptr == NULL) {
@@ -95,8 +111,9 @@ int set_elem(matrix *mat_ptr, double elem, size_t row, size_t col) {
 }
 
 
+
 int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col) {
-  if (mat_ptr == NULL) {
+  if (mat_ptr == NULL || elem == NULL) {
     return -1;
   }
 
@@ -107,6 +124,8 @@ int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col) {
   *elem = mat_ptr->data[col + row * mat_ptr->cols];
   return 0;
 }
+
+
 
 array *matrix_col_sum_common(matrix *mat_ptr) {
   if (mat_ptr == NULL) {

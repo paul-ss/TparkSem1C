@@ -15,6 +15,7 @@ typedef struct matrix {
     double *data;
 } matrix;
 
+matrix *create_matrix(size_t rows, size_t cols);
 matrix *create_matrix_from_file(const char *file_name);
 void free_matrix(matrix *mat_ptr);
 int set_elem(matrix *mat_ptr, double elem, size_t row, size_t col);
