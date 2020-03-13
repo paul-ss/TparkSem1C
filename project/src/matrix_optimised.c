@@ -124,14 +124,14 @@ void *thread_worker(void *void_attr_ptr) {
 
 
 
-array *matrix_col_sum_optimised(matrix *mat_ptr) {
+array *matrix_col_sum(matrix *mat_ptr) {
   if (mat_ptr == NULL) {
     return NULL;
   }
 
   // numder of cores
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
-  printf("proc number: %ld\n", proc_number);
+  //printf("proc number: %ld\n", proc_number);
   assert(proc_number >= 1);
   size_t n_child_threads =  proc_number;
 

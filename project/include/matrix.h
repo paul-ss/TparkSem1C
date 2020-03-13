@@ -21,8 +21,10 @@ int set_elem(matrix *mat_ptr, double elem, size_t row, size_t col);
 int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col);
 void print_matrix(matrix *mat_ptr);
 
+// optimised or naive depending on compilation
+array *matrix_col_sum(matrix *mat_ptr);
+
+// something between naive and opt
 array *matrix_col_sum_common(matrix *mat_ptr);
-array *matrix_col_sum_naive(matrix *mat_ptr);
-array *matrix_col_sum_optimised(matrix *mat_ptr);
 
 #endif //HW_2_MATRIX_H

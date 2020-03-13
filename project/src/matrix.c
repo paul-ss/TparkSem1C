@@ -108,33 +108,6 @@ int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col) {
   return 0;
 }
 
-
-
-
-
-array *matrix_col_sum_naive(matrix *mat_ptr) {
-  if (mat_ptr == NULL) {
-    return NULL;
-  }
-
-  array *arr_ptr = create_array(mat_ptr->cols);
-  if (arr_ptr == NULL) {
-    return NULL;
-  }
-
-
-  for (size_t i = 0; i < mat_ptr->cols; i++) {
-    double sum = 0;
-    for (size_t j = 0; j < mat_ptr->rows; j++) {
-      //get_elem(mat_ptr, &elem, j, i);
-      sum += mat_ptr->data[i + j * mat_ptr->cols];
-    }
-    arr_ptr->data[i] = sum;
-  }
-
-  return arr_ptr;
-}
-
 array *matrix_col_sum_common(matrix *mat_ptr) {
   if (mat_ptr == NULL) {
     return NULL;
@@ -147,7 +120,6 @@ array *matrix_col_sum_common(matrix *mat_ptr) {
 
 
   for (size_t i = 0; i < mat_ptr->rows; i++) {
-    double sum = 0;
     for (size_t j = 0; j < mat_ptr->cols; j++) {
       //get_elem(mat_ptr, &elem, j, i);
       arr_ptr->data[j] += mat_ptr->data[j + i * mat_ptr->cols];
@@ -156,4 +128,5 @@ array *matrix_col_sum_common(matrix *mat_ptr) {
 
   return arr_ptr;
 }
+
 
