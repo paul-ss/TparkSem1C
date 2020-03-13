@@ -77,6 +77,7 @@ matrix *create_matrix_from_file(const char *file_name) {
     }
   }
 
+  fclose(fp);
   return mat_ptr;
 }
 

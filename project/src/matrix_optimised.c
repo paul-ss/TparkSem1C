@@ -6,19 +6,13 @@
 
 #include "array.h"
 #include "matrix.h"
-#include "matrix_optimised.h"
 
 #include <stdio.h>
-#include <sys/mman.h>
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
-
 #include <stdlib.h>
 #include <pthread.h>
-
-pthread_mutex_t sums_lock;
-
 
 
 typedef struct worker_attr {
@@ -28,114 +22,31 @@ typedef struct worker_attr {
   size_t row_end;
 } worker_attr;
 
-
-void *thread_worker(void *void_attr_ptr);
-int join_child_threads(const pthread_t child_threads [], size_t n_child_threads);
-
-
-worker_attr create_worker_attr(array *sums_arr_ptr,
-                            const matrix *mat_ptr,
-                            size_t row_begin,
-                            size_t row_end) {
-  worker_attr w_attr = {};
-  w_attr.sums_arr_ptr = sums_arr_ptr;
-  w_attr.mat_ptr = mat_ptr;
-  w_attr.row_begin = row_begin;
-  w_attr.row_end = row_end;
-
-  return w_attr;
-}
+pthread_mutex_t sums_lock;
 
 
 
-
-/*void* create_shared_memory(size_t size) {
-  int protection = PROT_READ | PROT_WRITE;
-  int visibility = MAP_SHARED | MAP_ANONYMOUS;
-
-  void *shmem = mmap(NULL, size, protection, visibility, -1, 0);
-  if (shmem == NULL) {
-    return NULL;
+int set_workers_attr(worker_attr w_attr [], array *sums_arr_ptr, const matrix *mat_ptr, size_t n_child_threads) {
+  if (w_attr == NULL || sums_arr_ptr == NULL || mat_ptr == NULL) {
+    return -1;
   }
 
-  memset(shmem, 0, size);  // need it?
-  return shmem;
-}
-
-int free_shared_memory(void *addr, size_t length) {
-  return munmap(addr, length);
-}*/
-
-
-
-
-array *matrix_col_sum_optimised(matrix *mat_ptr) {
-  if (mat_ptr == NULL) {
-    return NULL;
-  }
-
-  // numder of cores
-  long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
-  printf("proc number: %ld\n", proc_number);
-  assert(proc_number > 1);
-  size_t n_child_threads =  proc_number;
-
-  // array for storing result
-  array *col_sums_ptr = create_array(mat_ptr->cols);
-  if (col_sums_ptr == NULL) {
-    return NULL;
-  }
-
-  pthread_t child_threads[n_child_threads];
-  memset(child_threads, 0, (n_child_threads) * sizeof(pthread_t));
-
-  //create threads
-  worker_attr w_attr[n_child_threads];
-  // memset
   size_t row_range = mat_ptr->rows / n_child_threads;
-  size_t i = 0;
-  for (; i <  n_child_threads ; i++) {
-    if (i + 1 == n_child_threads) {
-      w_attr[i] = create_worker_attr(col_sums_ptr, mat_ptr, i * row_range, mat_ptr->rows);
+
+  for (size_t i = 0; i <  n_child_threads; ++i) {
+    w_attr[i].sums_arr_ptr = sums_arr_ptr;
+    w_attr[i].mat_ptr = mat_ptr;
+    w_attr[i].row_begin = i * row_range;
+
+    if (i + 1 != n_child_threads) {
+      w_attr[i].row_end = (i + 1) * row_range;
     } else {
-      w_attr[i] = create_worker_attr(col_sums_ptr, mat_ptr, i * row_range, (i + 1) * row_range);
+      w_attr[i].row_end = mat_ptr->rows;
     }
-
-    if (pthread_create(&child_threads[i], NULL, thread_worker, &w_attr[i]) != 0) {
-      join_child_threads(child_threads, n_child_threads);
-      free_array(col_sums_ptr);
-      return NULL;
-    }
-
-    // set affinity
-    cpu_set_t cpuset;
-    CPU_ZERO(&cpuset);
-    CPU_SET(i, &cpuset);
-
-    if (pthread_setaffinity_np(child_threads[i], sizeof(cpu_set_t), &cpuset) != 0) {
-      join_child_threads(child_threads, n_child_threads);
-      free_array(col_sums_ptr);
-      return NULL;
-    }
-
   }
 
-
-
- /* w_attr = create_worker_attr(col_sums_ptr, mat_ptr,i * row_range, mat_ptr->rows);
-  void *return_status = thread_worker(&w_attr);
-  if ( *((int *) return_status) != 0) {
-    join_child_threads(child_threads, n_child_threads);
-    free(return_status);
-    free_array(col_sums_ptr);
-    return NULL;
-  } */
-
-  join_child_threads(child_threads, n_child_threads);
- // free(return_status);
-  return col_sums_ptr;
+  return 0;
 }
-
 
 
 
@@ -166,10 +77,8 @@ int join_child_threads(const pthread_t child_threads [], size_t n_child_threads)
 
 // [row_begin; row_end)
 void *thread_worker(void *void_attr_ptr) {
-  usleep(20000);
-
   worker_attr *attr_ptr = void_attr_ptr;
-  printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
+ // printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
 
   int *return_stat = calloc(1, sizeof(int));
 
@@ -194,9 +103,9 @@ void *thread_worker(void *void_attr_ptr) {
   register size_t cols = attr_ptr->mat_ptr->cols;
   register double *mat_data_ptr = attr_ptr->mat_ptr->data;
   register double *tmp_arr_ptr_data = tmp_arr_ptr->data;
+
   for (size_t i = row_begin; i < row_end; i++) {
     for (size_t j = 0; j < cols; j++) {
-      //get_elem(mat_ptr, &elem, j, i);
       tmp_arr_ptr_data[j] += mat_data_ptr[j + i * cols];
     }
   }
@@ -204,11 +113,64 @@ void *thread_worker(void *void_attr_ptr) {
   register double *target_sums_array_ptr = attr_ptr->sums_arr_ptr->data;
   pthread_mutex_lock(&sums_lock);
   for (size_t j = 0; j < cols; j++) {
-    target_sums_array_ptr[j] += tmp_arr_ptr->data[j];
+    target_sums_array_ptr[j] += tmp_arr_ptr_data[j];
   }
   pthread_mutex_unlock(&sums_lock);
 
   free_array(tmp_arr_ptr);
   *return_stat = 0;
   return return_stat;
+}
+
+
+
+array *matrix_col_sum_optimised(matrix *mat_ptr) {
+  if (mat_ptr == NULL) {
+    return NULL;
+  }
+
+  // numder of cores
+  long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
+  printf("proc number: %ld\n", proc_number);
+  assert(proc_number >= 1);
+  size_t n_child_threads =  proc_number;
+
+  // array for storing result
+  array *col_sums_ptr = create_array(mat_ptr->cols);
+  if (col_sums_ptr == NULL) {
+    return NULL;
+  }
+
+  pthread_t child_threads[n_child_threads];
+  memset(child_threads, 0, (n_child_threads) * sizeof(pthread_t));
+
+  worker_attr w_attr[n_child_threads];
+  memset(w_attr, 0, (n_child_threads) * sizeof(worker_attr));
+  if (set_workers_attr(w_attr, col_sums_ptr, mat_ptr, n_child_threads) != 0) {
+    free_array(col_sums_ptr);
+    return NULL;
+  }
+
+  //create threads
+  for (size_t i = 0; i <  n_child_threads ; i++) {
+    if (pthread_create(&child_threads[i], NULL, thread_worker, &w_attr[i]) != 0) {
+      join_child_threads(child_threads, n_child_threads);
+      free_array(col_sums_ptr);
+      return NULL;
+    }
+
+    // set affinity
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(i, &cpuset);
+
+    if (pthread_setaffinity_np(child_threads[i], sizeof(cpu_set_t), &cpuset) != 0) {
+      join_child_threads(child_threads, n_child_threads);
+      free_array(col_sums_ptr);
+      return NULL;
+    }
+  }
+
+  join_child_threads(child_threads, n_child_threads);
+  return col_sums_ptr;
 }
