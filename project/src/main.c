@@ -30,17 +30,21 @@ int main(int argc, char* argv[]) {
 
   long cycles = 0;
   double wtime = 0.0;
+  for (int i = 0; i < N_ITERATIONS; i ++) {
+    double wstart = omp_get_wtime();
+    long cycles1 = rdtsc();
+    array *arr_ptr = matrix_col_sum(mat_ptr);
+    long cycles2 = rdtsc();
+    double wfinish = omp_get_wtime();
 
-  double wstart = omp_get_wtime();
-  long cycles1 = rdtsc();
-  array *arr_ptr = matrix_col_sum(mat_ptr);
-  long cycles2 = rdtsc();
-  double wfinish = omp_get_wtime();
+    wtime += (wfinish - wstart);
+    cycles += (cycles2 - cycles1);
 
-  wtime = wfinish - wstart;
-  cycles = cycles2 - cycles1;
+    free_array(arr_ptr);
+  }
 
-  free_array(arr_ptr);
+  wtime /= N_ITERATIONS;
+  cycles /= N_ITERATIONS;
 
   printf("Matrix %zux%zu\n", mat_ptr->rows, mat_ptr->cols);
   printf("proc cycles: %ld\nwtime: %lf\n\n", cycles, wtime);

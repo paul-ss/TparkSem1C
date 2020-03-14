@@ -5,8 +5,17 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_C_FLAGS "-pthread  -fopenmp")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic --coverage")
-set(CMAKE_CXX_FLAGS "--coverage")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Werror -Wpedantic")
+set(CMAKE_CXX_FLAGS "-pthread")
+
+if ($ENV{COVERAGE})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+    message("-- Coverage enable")
+else ()
+    message("-- Coverage disable")
+endif()
+
 
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)

@@ -78,7 +78,7 @@ int join_child_threads(const pthread_t child_threads [], size_t n_child_threads)
 // [row_begin; row_end)
 void *thread_worker(void *void_attr_ptr) {
   worker_attr *attr_ptr = void_attr_ptr;
-  printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
+ // printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
 
   int *return_stat = calloc(1, sizeof(int));
 
@@ -131,7 +131,7 @@ array *matrix_col_sum(matrix *mat_ptr) {
 
   // numder of cores
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
-  printf("proc number: %ld\n", proc_number);
+ // printf("proc number: %ld\n", proc_number);
   assert(proc_number >= 1);
   size_t n_child_threads =  proc_number;
 
