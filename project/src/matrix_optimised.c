@@ -68,8 +68,8 @@ int join_child_threads(const pthread_t child_threads[], size_t n_child_threads) 
       if (pthread_join(child_threads[i], &retval) != 0) {
         status = -1;
       }
-
-      if (*((int *)retval) != 0) {
+      int *casted_retval = retval;
+      if (*casted_retval != 0) {
         status = -1;
       }
 
