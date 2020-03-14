@@ -48,7 +48,8 @@ script:
   - cd build
   - cmake .. || travis_terminate 1
   - make || travis_terminate 1
-  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests || travis_terminate 1
+  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests_naive || travis_terminate 1
+  - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests_opt || travis_terminate 1
 #  - ./gen 1.txt 500 500 || travis_terminate 1
 #  - ./gen 2.txt 5000 5000 || travis_terminate 1
 #  - ./gen 3.txt 10000 10000 || travis_terminate 1

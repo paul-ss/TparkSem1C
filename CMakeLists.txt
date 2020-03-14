@@ -38,14 +38,19 @@ add_executable(hw2_naive
 add_executable(hw2_opt
         project/src/main.c)
 
-add_executable(tests
+add_executable(tests_naive
+        tests/main.cpp
+        tests/test_matrix.cpp tests/utils.cpp tests/utils.h)
+add_executable(tests_opt
         tests/main.cpp
         tests/test_matrix.cpp tests/utils.cpp tests/utils.h)
 
 target_link_libraries(hw2_naive matrix_naive)
 target_link_libraries(hw2_opt matrix_opt)
-target_link_libraries(tests ${GTEST_LIBRARIES} Threads::Threads matrix_naive)
+target_link_libraries(tests_naive ${GTEST_LIBRARIES} Threads::Threads matrix_naive)
+target_link_libraries(tests_opt ${GTEST_LIBRARIES} Threads::Threads matrix_opt)
 
 
 enable_testing()
-add_test(tests "./tests")
+add_test(tests_naive "./tests")
+add_test(tests_opt "./tests")
