@@ -1,8 +1,13 @@
 #!/bin/bash
 
-mkdir build
-cd build
+BUILD_DIR=build_stress
+LOG_FILE_NAME=log.txt
 export COVERAGE=0
+
+mkdir ${BUILD_DIR}
+cd ${BUILD_DIR}
+
+
 cmake ..
 make 
 
@@ -22,44 +27,44 @@ echo "generate matrix 10000x10000..."
 
 
 
-echo "Naive method" > ../log.txt
-echo "===================" >> ../log.txt
+echo "Naive method" > ${LOG_FILE_NAME}
+echo "===================" >> ${LOG_FILE_NAME}
 
 echo "solve matrix 100x100..."
-./hw2_naive 10.txt >> ../log.txt
+./hw2_naive 10.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 1000x1000..."
-./hw2_naive 1.txt >> ../log.txt
+./hw2_naive 1.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 5000x5000..."
-./hw2_naive 2.txt >> ../log.txt
+./hw2_naive 2.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 10000x10000..."
-./hw2_naive 3.txt >> ../log.txt
+./hw2_naive 3.txt >> ${LOG_FILE_NAME}
 
 
 
 
 
-echo "Optimised method" >> ../log.txt
-echo "===================" >> ../log.txt
+echo "Optimised method" >> ${LOG_FILE_NAME}
+echo "===================" >> ${LOG_FILE_NAME}
 
 echo "solve matrix 100x100..."
-./hw2_opt 10.txt >> ../log.txt
+./hw2_opt 10.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 1000x1000..."
-./hw2_opt 1.txt >> ../log.txt
+./hw2_opt 1.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 5000x5000..."
-./hw2_opt 2.txt >> ../log.txt
+./hw2_opt 2.txt >> ${LOG_FILE_NAME}
 
 echo "solve matrix 10000x10000..."
-./hw2_opt 3.txt >> ../log.txt
+./hw2_opt 3.txt >> ${LOG_FILE_NAME}
 
 
 
-cat ../log.txt
+cat ${LOG_FILE_NAME}
 
 cd ..
-rm -r build
+rm -r ${BUILD_DIR}
 
