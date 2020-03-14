@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 
+#define MAX_CHILD_THREADS 256
+
 
 typedef struct worker_attr {
   array *sums_arr_ptr;
@@ -134,9 +136,9 @@ array *matrix_col_sum(matrix *mat_ptr) {
 
   // numder of cores
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
-  // printf("proc number: %ld\n", proc_number);
   assert(proc_number >= 1);
   size_t n_child_threads =  proc_number;
+  assert(n_child_threads <= MAX_CHILD_THREADS);
 
   // array for storing result
   array *col_sums_ptr = create_array(mat_ptr->cols);
@@ -144,10 +146,10 @@ array *matrix_col_sum(matrix *mat_ptr) {
     return NULL;
   }
 
-  pthread_t child_threads[n_child_threads];
+  pthread_t child_threads[MAX_CHILD_THREADS];
   memset(child_threads, 0, (n_child_threads) * sizeof(pthread_t));
 
-  worker_attr w_attr[n_child_threads];
+  worker_attr w_attr[MAX_CHILD_THREADS];
   memset(w_attr, 0, (n_child_threads) * sizeof(worker_attr));
   if (set_workers_attr(w_attr, col_sums_ptr, mat_ptr, n_child_threads) != 0) {
     free_array(col_sums_ptr);
