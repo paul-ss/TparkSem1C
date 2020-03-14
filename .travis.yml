@@ -52,7 +52,7 @@ script:
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests_naive || travis_terminate 1
   - valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --leak-resolution=med  --track-origins=yes ./tests_opt || travis_terminate 1
   - cd ..
-  - source stress_tests.sh || travis_terminate 1
+  - ./stress_tests.sh || travis_terminate 1
 
 after_script:
   - bash <(curl -s https://codecov.io/bash)

@@ -19,7 +19,6 @@ array *matrix_col_sum(matrix *mat_ptr) {
   for (size_t i = 0; i < mat_ptr->cols; i++) {
     double sum = 0;
     for (size_t j = 0; j < mat_ptr->rows; j++) {
-      //get_elem(mat_ptr, &elem, j, i);
       sum += mat_ptr->data[i + j * mat_ptr->cols];
     }
     arr_ptr->data[i] = sum;

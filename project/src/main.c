@@ -6,17 +6,14 @@
 
 #define N_ITERATIONS 5
 
-static __inline__ unsigned long long rdtsc(void)
-{
+static __inline__ unsigned long long rdtsc(void) {
   unsigned hi, lo;
   __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
-  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi) << 32 );
 }
 
 
 int main(int argc, char* argv[]) {
-
-
   if (argc < 2) {
     printf("Invalid input arguments\n");
     return 0;
@@ -30,7 +27,7 @@ int main(int argc, char* argv[]) {
 
   long cycles = 0;
   double wtime = 0.0;
-  for (int i = 0; i < N_ITERATIONS; i ++) {
+  for (int i = 0; i < N_ITERATIONS; i++) {
     double wstart = omp_get_wtime();
     long cycles1 = rdtsc();
     array *arr_ptr = matrix_col_sum(mat_ptr);

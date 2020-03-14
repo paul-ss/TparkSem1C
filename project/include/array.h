@@ -2,8 +2,8 @@
 // Created by paul_s on 11.03.2020.
 //
 
-#ifndef HW_2_ARRAY_H
-#define HW_2_ARRAY_H
+#ifndef PROJECT_INCLUDE_ARRAY_H_
+#define PROJECT_INCLUDE_ARRAY_H_
 
 #include <stdio.h>
 
@@ -17,4 +17,4 @@ array *create_array(size_t size);
 void free_array(array *arr_ptr);
 
 
-#endif //HW_2_ARRAY_H
+#endif  // PROJECT_INCLUDE_ARRAY_H_

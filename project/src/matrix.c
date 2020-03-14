@@ -140,7 +140,6 @@ array *matrix_col_sum_common(matrix *mat_ptr) {
 
   for (size_t i = 0; i < mat_ptr->rows; i++) {
     for (size_t j = 0; j < mat_ptr->cols; j++) {
-      //get_elem(mat_ptr, &elem, j, i);
       arr_ptr->data[j] += mat_ptr->data[j + i * mat_ptr->cols];
     }
   }

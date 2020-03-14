@@ -3,8 +3,8 @@
 // Created by paul_s on 09.03.2020.
 //
 
-#ifndef HW_2_MATRIX_H
-#define HW_2_MATRIX_H
+#ifndef PROJECT_INCLUDE_MATRIX_H_
+#define PROJECT_INCLUDE_MATRIX_H_
 
 #include <stdio.h>
 #include "array.h"
@@ -28,4 +28,4 @@ array *matrix_col_sum(matrix *mat_ptr);
 // something between naive and opt
 array *matrix_col_sum_common(matrix *mat_ptr);
 
-#endif //HW_2_MATRIX_H
+#endif  // PROJECT_INCLUDE_MATRIX_H_

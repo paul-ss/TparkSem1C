@@ -26,7 +26,10 @@ pthread_mutex_t sums_lock;
 
 
 
-int set_workers_attr(worker_attr w_attr [], array *sums_arr_ptr, const matrix *mat_ptr, size_t n_child_threads) {
+int set_workers_attr(worker_attr w_attr[],
+                      array *sums_arr_ptr,
+                      const matrix *mat_ptr,
+                      size_t n_child_threads) {
   if (w_attr == NULL || sums_arr_ptr == NULL || mat_ptr == NULL) {
     return -1;
   }
@@ -50,7 +53,7 @@ int set_workers_attr(worker_attr w_attr [], array *sums_arr_ptr, const matrix *m
 
 
 
-int join_child_threads(const pthread_t child_threads [], size_t n_child_threads) {
+int join_child_threads(const pthread_t child_threads[], size_t n_child_threads) {
   if (child_threads == NULL) {
     return -1;
   }
@@ -78,7 +81,7 @@ int join_child_threads(const pthread_t child_threads [], size_t n_child_threads)
 // [row_begin; row_end)
 void *thread_worker(void *void_attr_ptr) {
   worker_attr *attr_ptr = void_attr_ptr;
- // printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
+  // printf("Thread#%zu, CPU%d\n", attr_ptr->row_begin,  sched_getcpu());
 
   int *return_stat = calloc(1, sizeof(int));
 
@@ -131,7 +134,7 @@ array *matrix_col_sum(matrix *mat_ptr) {
 
   // numder of cores
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
- // printf("proc number: %ld\n", proc_number);
+  // printf("proc number: %ld\n", proc_number);
   assert(proc_number >= 1);
   size_t n_child_threads =  proc_number;
 
@@ -151,7 +154,7 @@ array *matrix_col_sum(matrix *mat_ptr) {
     return NULL;
   }
 
-  //create threads
+  // create threads
   for (size_t i = 0; i <  n_child_threads ; i++) {
     if (pthread_create(&child_threads[i], NULL, thread_worker, &w_attr[i]) != 0) {
       join_child_threads(child_threads, n_child_threads);
