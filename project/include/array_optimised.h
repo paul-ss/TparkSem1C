@@ -2,8 +2,8 @@
 // Created by paul_s on 18.03.2020.
 //
 
-#ifndef HW_2_ARRAY_OPTIMISED_H
-#define HW_2_ARRAY_OPTIMISED_H
+#ifndef PROJECT_INCLUDE_ARRAY_OPTIMISED_H_
+#define PROJECT_INCLUDE_ARRAY_OPTIMISED_H_
 
 
 #include "matrix.h"
@@ -39,4 +39,4 @@ worker_attr_array *create_worker_attr_array(size_t size);
 void free_worker_attr_array(worker_attr_array *arr_ptr);
 
 
-#endif //HW_2_ARRAY_OPTIMISED_H
+#endif  // PROJECT_INCLUDE_ARRAY_OPTIMISED_H_
