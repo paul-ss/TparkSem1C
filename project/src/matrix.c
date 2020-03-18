@@ -42,12 +42,10 @@ void free_matrix(matrix *mat_ptr) {
 
 
 
-void print_matrix(matrix *mat_ptr) {
+void print_matrix(const matrix *mat_ptr) {
   if (mat_ptr->data == NULL) {
-    free(mat_ptr);
     return;
   }
-
 
   for (size_t i = 0; i < mat_ptr->rows; i++) {
     for (size_t j = 0; j < mat_ptr->cols; j++) {
@@ -87,7 +85,12 @@ matrix *create_matrix_from_file(const char *file_name) {
         fclose(fp);
         return NULL;
       }
-      set_elem(mat_ptr, elem, i, j);
+
+      if (set_elem(mat_ptr, elem, i, j) != 0) {
+        free_matrix(mat_ptr);
+        fclose(fp);
+        return NULL;
+      }
     }
   }
 
@@ -112,7 +115,7 @@ int set_elem(matrix *mat_ptr, double elem, size_t row, size_t col) {
 
 
 
-int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col) {
+int get_elem(const matrix *mat_ptr, double *elem, size_t row, size_t col) {
   if (mat_ptr == NULL || elem == NULL) {
     return -1;
   }
@@ -127,12 +130,12 @@ int get_elem(matrix *mat_ptr, double *elem, size_t row, size_t col) {
 
 
 
-array *matrix_col_sum_common(matrix *mat_ptr) {
+double_array *matrix_col_sum_common(const matrix *mat_ptr) {
   if (mat_ptr == NULL) {
     return NULL;
   }
 
-  array *arr_ptr = create_array(mat_ptr->cols);
+  double_array *arr_ptr = create_double_array(mat_ptr->cols);
   if (arr_ptr == NULL) {
     return NULL;
   }

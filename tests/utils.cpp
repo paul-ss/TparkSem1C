@@ -20,7 +20,7 @@ void is_equal(matrix *mat_ptr1, matrix *mat_ptr2) {
   }
 }
 
-void is_equal(array *arr_ptr1, array *arr_ptr2) {
+void is_equal(double_array *arr_ptr1, double_array *arr_ptr2) {
   ASSERT_TRUE(arr_ptr1 != nullptr);
   ASSERT_TRUE(arr_ptr2 != nullptr);
   ASSERT_EQ(arr_ptr1->size, arr_ptr2->size);

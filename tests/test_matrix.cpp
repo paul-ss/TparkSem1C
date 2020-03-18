@@ -104,15 +104,15 @@ TEST(matrix, col_sums) {
   matrix *mat_ptr = generate_matrix(100, 100);
   ASSERT_TRUE(mat_ptr != nullptr);
 
-  array *arr_ptr1 = matrix_col_sum(mat_ptr);
+  double_array *arr_ptr1 = matrix_col_sum(mat_ptr);
   ASSERT_TRUE(arr_ptr1 != nullptr);
 
-  array *arr_ptr2 = matrix_col_sum_common(mat_ptr);
+  double_array *arr_ptr2 = matrix_col_sum_common(mat_ptr);
   ASSERT_TRUE(arr_ptr2 != nullptr);
 
   is_equal(arr_ptr1, arr_ptr2);
 
   free_matrix(mat_ptr);
-  free_array(arr_ptr1);
-  free_array(arr_ptr2);
+  free_double_array(arr_ptr1);
+  free_double_array(arr_ptr2);
 }

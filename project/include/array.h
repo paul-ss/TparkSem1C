@@ -8,13 +8,13 @@
 #include <stdio.h>
 
 
-typedef struct array {
+typedef struct double_array {
   size_t size;
   double *data;
-} array;
+} double_array;
 
-array *create_array(size_t size);
-void free_array(array *arr_ptr);
+double_array *create_double_array(size_t size);
+void free_double_array(double_array *arr_ptr);
 
 
 #endif  // PROJECT_INCLUDE_ARRAY_H_

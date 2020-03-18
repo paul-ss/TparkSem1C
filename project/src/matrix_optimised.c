@@ -4,34 +4,23 @@
 
 #define _GNU_SOURCE
 
-#include "array.h"
-#include "matrix.h"
+#include "array_optimised.h"
 
-#include <stdio.h>
+
 #include <unistd.h>
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <pthread.h>
 
-#define MAX_CHILD_THREADS 256
-
-
-typedef struct worker_attr {
-  array *sums_arr_ptr;
-  const matrix *mat_ptr;
-  size_t row_begin;
-  size_t row_end;
-} worker_attr;
 
 pthread_mutex_t sums_lock;
 
 
-
 int set_workers_attr(worker_attr w_attr[],
-                      array *sums_arr_ptr,
-                      const matrix *mat_ptr,
-                      size_t n_child_threads) {
+                     double_array *sums_arr_ptr,
+                     const matrix *mat_ptr,
+                     size_t n_child_threads) {
   if (w_attr == NULL || sums_arr_ptr == NULL || mat_ptr == NULL) {
     return -1;
   }
@@ -97,7 +86,7 @@ void *thread_worker(void *void_attr_ptr) {
     return return_stat;
   }
 
-  array *tmp_arr_ptr = create_array(attr_ptr->mat_ptr->cols);
+  double_array *tmp_arr_ptr = create_double_array(attr_ptr->mat_ptr->cols);
   if (tmp_arr_ptr == NULL) {
     *return_stat = -1;
     return return_stat;
@@ -122,14 +111,14 @@ void *thread_worker(void *void_attr_ptr) {
   }
   pthread_mutex_unlock(&sums_lock);
 
-  free_array(tmp_arr_ptr);
+  free_double_array(tmp_arr_ptr);
   *return_stat = 0;
   return return_stat;
 }
 
 
 
-array *matrix_col_sum(matrix *mat_ptr) {
+double_array *matrix_col_sum(const matrix *mat_ptr) {
   if (mat_ptr == NULL) {
     return NULL;
   }
@@ -138,29 +127,37 @@ array *matrix_col_sum(matrix *mat_ptr) {
   long proc_number = sysconf(_SC_NPROCESSORS_ONLN);
   assert(proc_number >= 1);
   size_t n_child_threads =  proc_number;
-  assert(n_child_threads <= MAX_CHILD_THREADS);
 
-  // array for storing result
-  array *col_sums_ptr = create_array(mat_ptr->cols);
+  // double_array for storing result
+  double_array *col_sums_ptr = create_double_array(mat_ptr->cols);
   if (col_sums_ptr == NULL) {
     return NULL;
   }
 
-  pthread_t child_threads[MAX_CHILD_THREADS];
-  memset(child_threads, 0, (n_child_threads) * sizeof(pthread_t));
+  pthread_t_array *child_threads = create_pthread_t_array(n_child_threads);
+  worker_attr_array *w_attr = create_worker_attr_array(n_child_threads);
+  if (w_attr == NULL || child_threads == NULL) {
+    free_pthread_t_array(child_threads);
+    free_worker_attr_array(w_attr);
+    free_double_array(col_sums_ptr);
+    return NULL;
+  }
 
-  worker_attr w_attr[MAX_CHILD_THREADS];
-  memset(w_attr, 0, (n_child_threads) * sizeof(worker_attr));
-  if (set_workers_attr(w_attr, col_sums_ptr, mat_ptr, n_child_threads) != 0) {
-    free_array(col_sums_ptr);
+
+  if (set_workers_attr(w_attr->data, col_sums_ptr, mat_ptr, n_child_threads) != 0) {
+    free_pthread_t_array(child_threads);
+    free_worker_attr_array(w_attr);
+    free_double_array(col_sums_ptr);
     return NULL;
   }
 
   // create threads
   for (size_t i = 0; i <  n_child_threads ; i++) {
-    if (pthread_create(&child_threads[i], NULL, thread_worker, &w_attr[i]) != 0) {
-      join_child_threads(child_threads, n_child_threads);
-      free_array(col_sums_ptr);
+    if (pthread_create(&child_threads->data[i], NULL, thread_worker, &w_attr->data[i]) != 0) {
+      join_child_threads(child_threads->data, n_child_threads);
+      free_pthread_t_array(child_threads);
+      free_worker_attr_array(w_attr);
+      free_double_array(col_sums_ptr);
       return NULL;
     }
 
@@ -169,13 +166,17 @@ array *matrix_col_sum(matrix *mat_ptr) {
     CPU_ZERO(&cpuset);
     CPU_SET(i, &cpuset);
 
-    if (pthread_setaffinity_np(child_threads[i], sizeof(cpu_set_t), &cpuset) != 0) {
-      join_child_threads(child_threads, n_child_threads);
-      free_array(col_sums_ptr);
+    if (pthread_setaffinity_np(child_threads->data[i], sizeof(cpu_set_t), &cpuset) != 0) {
+      join_child_threads(child_threads->data, n_child_threads);
+      free_pthread_t_array(child_threads);
+      free_worker_attr_array(w_attr);
+      free_double_array(col_sums_ptr);
       return NULL;
     }
   }
 
-  join_child_threads(child_threads, n_child_threads);
+  join_child_threads(child_threads->data, n_child_threads);
+  free_pthread_t_array(child_threads);
+  free_worker_attr_array(w_attr);
   return col_sums_ptr;
 }

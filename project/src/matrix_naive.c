@@ -5,12 +5,12 @@
 #include "array.h"
 
 
-array *matrix_col_sum(matrix *mat_ptr) {
+double_array *matrix_col_sum(const matrix *mat_ptr) {
   if (mat_ptr == NULL) {
     return NULL;
   }
 
-  array *arr_ptr = create_array(mat_ptr->cols);
+  double_array *arr_ptr = create_double_array(mat_ptr->cols);
   if (arr_ptr == NULL) {
     return NULL;
   }

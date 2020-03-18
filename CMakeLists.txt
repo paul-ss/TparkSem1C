@@ -35,7 +35,9 @@ add_library(matrix_opt SHARED
         project/src/array.c
         project/include/matrix.h
         project/include/array.h
-        project/src/matrix_optimised.c)
+        project/src/matrix_optimised.c
+        project/src/array_optimised.c
+        project/include/array_optimised.h)
 
 
 add_executable(gen
@@ -49,14 +51,19 @@ add_executable(hw2_opt
 
 add_executable(tests_naive
         tests/main.cpp
-        tests/test_matrix.cpp tests/utils.cpp tests/utils.h)
+        tests/test_matrix.cpp
+        tests/utils.cpp
+        tests/utils.h)
+
 add_executable(tests_opt
         tests/main.cpp
-        tests/test_matrix.cpp tests/utils.cpp tests/utils.h)
+        tests/test_matrix.cpp
+        tests/utils.cpp
+        tests/utils.h)
 
 target_link_libraries(hw2_naive matrix_naive)
 target_link_libraries(hw2_opt matrix_opt)
-target_link_libraries(tests_naive ${GTEST_LIBRARIES} Threads::Threads matrix_naive)
+target_link_libraries(tests_naive ${GTEST_LIBRARIES} matrix_naive)
 target_link_libraries(tests_opt ${GTEST_LIBRARIES} Threads::Threads matrix_opt)
 
 

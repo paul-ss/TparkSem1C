@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 
-array *create_array(size_t size) {
-  array *arr_ptr = calloc(1, sizeof(array));
+double_array *create_double_array(size_t size) {
+  double_array *arr_ptr = calloc(1, sizeof(double_array));
   if (arr_ptr == NULL) {
     return NULL;
   }
@@ -24,7 +24,9 @@ array *create_array(size_t size) {
 }
 
 
-void free_array(array *arr_ptr) {
-  free(arr_ptr->data);
+void free_double_array(double_array *arr_ptr) {
+  if (arr_ptr != NULL) {
+    free(arr_ptr->data);
+  }
   free(arr_ptr);
 }
